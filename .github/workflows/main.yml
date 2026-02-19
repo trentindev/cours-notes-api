@@ -1,0 +1,64 @@
+name: CI
+
+# Déclencheurs du workflow
+# Le pipeline s’exécute automatiquement :
+# - Lors d’un push sur la branche main
+# - Lors d’une Pull Request vers main
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+# Définition des jobs
+# Un workflow peut contenir plusieurs jobs.
+# Ici, on en définit un seul.
+jobs:
+  # Nom du job
+  build-and-test:
+    # Environnement d’exécution
+    # GitHub fournit une machine virtuelle Ubuntu
+    runs-on: ubuntu-latest
+
+    # Liste des étapes exécutées dans l’ordre
+    steps:
+      # Étape 1 : récupération du code du dépôt
+      - name: Checkout
+        uses: actions/checkout@v4
+        # Cette action télécharge le code du repository
+        # dans la machine virtuelle du runner
+
+      # Étape 2 : installation/configuration de Node.js
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+        # Cette action installe Node.js version 20
+        # sur la machine virtuelle
+
+      # Étape 3 : installation des dépendances
+      - name: Install dependencies
+        run: npm ci
+        # npm ci installe les dépendances à partir
+        # du package-lock.json
+        # C’est recommandé en CI car plus reproductible
+        # et plus rapide que npm install
+
+      # Étape 4 : analyse du code avec ESLint
+      - name: Lint
+        run: npm run lint
+        # Si ESLint détecte une erreur bloquante,
+        # le job échoue et la Pull Request est bloquée
+
+      # Étape 5 : exécution des tests
+      - name: Tests
+        run: npm test
+        # Lance les tests Jest
+        # Si un test échoue, le job échoue
+        # et le merge est bloqué si la branche est protégée
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Tests
+        run: npm test
