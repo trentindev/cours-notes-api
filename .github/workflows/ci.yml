@@ -1,3 +1,4 @@
+# Nom du workflow affiché dans l’onglet "Actions" de GitHub
 name: CI
 
 # Déclencheurs du workflow
