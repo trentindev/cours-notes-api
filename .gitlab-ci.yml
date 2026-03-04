@@ -1,0 +1,25 @@
+stages:
+  - install
+  - quality
+  - test
+
+image: node:20
+
+cache:
+  paths:
+    - node_modules/
+
+install_dependencies:
+  stage: install
+  script:
+    - npm ci
+
+lint:
+  stage: quality
+  script:
+    - npm run lint
+
+tests:
+  stage: test
+  script:
+    - npm test
